@@ -2,81 +2,77 @@ name: CI
 on:
   push:
     branches-ignore:
-      - 'generated'
-      - 'codegen/**'
-      - 'integrated/**'
-      - 'stl-preview-head/**'
-      - 'stl-preview-base/**'
+    - generated
+    - codegen/**
+    - integrated/**
+    - stl-preview-head/**
+    - stl-preview-base/**
   pull_request:
     branches-ignore:
-      - 'stl-preview-head/**'
-      - 'stl-preview-base/**'
-
+    - stl-preview-head/**
+    - stl-preview-base/**
 jobs:
   lint:
     timeout-minutes: 10
     name: lint
-    runs-on: ${{ github.repository == 'stainless-sdks/openai-java' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
-
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '8
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: |
-            8
-            21
-          cache: gradle
+          21
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Run lints
-        run: ./scripts/lint
+          '
+        cache: gradle
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@v4
+    - name: Run lints
+      run: ./scripts/lint
   test:
     timeout-minutes: 10
     name: test
-    runs-on: ${{ github.repository == 'stainless-sdks/openai-java' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '8
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: |
-            8
-            21
-          cache: gradle
+          21
 
-      - name: Set up Gradle
-        uses: gradle/gradle-build-action@v2
-
-      - name: Run tests
-        run: ./scripts/test
+          '
+        cache: gradle
+    - name: Set up Gradle
+      uses: gradle/gradle-build-action@v2
+    - name: Run tests
+      run: ./scripts/test
   examples:
     timeout-minutes: 10
     name: examples
-    runs-on: ${{ github.repository == 'stainless-sdks/openai-java' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     if: github.repository == 'openai/openai-java'
-
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '8
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: |
-            8
-            21
-          cache: gradle
-      - name: Set up Gradle
-        uses: gradle/gradle-build-action@v2
+          21
 
-      - env: 
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-            ./gradlew :openai-java-example:run
+          '
+        cache: gradle
+    - name: Set up Gradle
+      uses: gradle/gradle-build-action@v2
+    - env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      run: './gradlew :openai-java-example:run
+
+        '
